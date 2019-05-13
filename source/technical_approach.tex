@@ -58,6 +58,60 @@ separately with enough resting interval. Otherwise, several
 segments may be counted as one and may be discarded due to
 oversize.
 
+\begin{tiny}
+\begin{algorithm}
+  \caption{MTS segmentation algorithm}
+  \scriptsize
+  \KwIn{current signal sample: $current\_sample$, current sample position: $current\_position$}
+  \KwOut{segment starting and ending points: idstart$\_$point, $end\_point$ or NONE}
+  \uIf{$current\_sample<${LO}$\_${THD} {\bf and} $start\_flag == $ FALSE}
+  {
+    \eIf{$jump\_flag == TRUE$}
+    {
+      $start\_point\leftarrow current\_position$
+    }{
+      $reset\_cont\leftarrow reset\_cont + 1$ \\
+      \If{$reset\_cont>$RESET$\_$COUNT}
+      {
+        RESET$()$      
+      }
+    }
+  }
+  \uElseIf{$current\_sample\geq${HI}$\_${THD} {\bf and} $start\_flag == $ FALSE}
+  {
+    $reset\_count\leftarrow 0$ \\
+    $jump\_flag\leftarrow$ TRUE \\
+    $signal\_cont\leftarrow signal\_cont + 1$ \\
+    \If{$signal\_cont>$SIGNAL$\_$COUNT}
+     {
+        $start\_flag\leftarrow$ TRUE      
+     }
+  }
+  \uElseIf{$current\_sample<${LO}$\_${THD} {\bf and} $start\_flag == $ TRUE}
+  {
+    \If{$jump\_flag == $ TRUE}
+     {
+        $end\_point\leftarrow current\_position$ \\
+        $jump\_flag\leftarrow$ FALSE
+     }
+     $ending\_cont\leftarrow ending\_cont + 1$ \\
+     \If{$ending\_cont>$ENDING$\_$COUNT}
+     {
+        \Return $start\_point, end\_point$
+     }
+  }
+  \ElseIf{$current\_sample\geq${HI}$\_${THD} {\bf and} $start\_flag == $ TRUE}
+  {
+    \If{$jump\_flag == $ FALSE}
+     {
+        $ending\_cont\leftarrow 0$ \\
+        $end\_point\leftarrow current\_position$
+     }
+  }
+  \Return NONE;
+\end{algorithm}
+\end{tiny}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=8cm]{fig/fig5}
@@ -75,6 +129,47 @@ pattern over the threshold, then it will be discarded. We find
 this rejection step to be able to effectively reduce the number of
 false-positive detections due to casual, unintended movement.
 The basic DTW algorithm is shown in Algorithm 2.
+
+\begin{tiny}
+\begin{algorithm}
+  \caption{Dynamic Time Warping}
+  \scriptsize
+  \KwIn{signal sequence A: $seq\_a$ of length M, signal sequence B:$seq\_b$ of length N}
+  \KwOut{similarity score: $matching\_score$}
+  \SetAlgoLined
+  \SetKwProg{Fn}{initialization}{}{end}
+  \Fn{}{cost matrix $cost\_matrix$ \\ slope matrices $slope\_x$ and $slope\_y$ \\}
+  \For{$i=2$ to $M+1$}
+  {
+    \For{$j=2$ to $N+1$}
+    {
+      \If{ABS$(i-j)\leq$ WINDOW$\_$SIZE}
+       {
+          \begin{algomathdisplay}
+          neighbors \leftarrow
+          \begin{pmatrix}
+            cost\_matrix(i-1, j) \\
+            cost\_matrix(i, j-1) \\
+            cost\_matrix(i-1, j-1)
+          \end{pmatrix}
+          \end{algomathdisplay}\\
+          \If{$slope\_x(i-1, j)$ == SLOPE$\_T$HRESHOLD}
+          {
+             $neighbors(1)\leftarrow$ INF      
+          }
+          \If{$slope\_y(i, j-1)$ == SLOPE$\_T$HRESHOLD}
+          {
+             $neighbors(2)\leftarrow$ INF      
+          }
+          $cost\_matrix(i, j)\leftarrow$\\
+          MIN$(neighbors)$ + DISTANCE$(seq\_a(i-1), seq\_b(j-1))$\\
+          SLOPE$\_$UPDATE()
+       }
+     }  
+  }
+  \Return $cost\_matrix(M+1, N+1)$
+  \end{algorithm}
+\end{tiny}
 
 DTW finds a match between two time sequences by dynamic
 programming. The idea is to find the shortest path in the
