@@ -1,19 +1,110 @@
-\section{Ease of Use}
-\subsection{Maintaining the Integrity of the Specifications}
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+\section{BACKGROUND AND RELATED WORKS}
+Single ACC-based hand gesture recognition has been well
+studied. One advantage of ACC is its availability on many
+off-the-shelf portable devices. Examples include TI Chronos
+Watch \cite{c5}, Nintendo Wii remote controller, and virtually all
+smartphones. A digital ACC consumes less than 1 mW in
+active mode. Acceleration data can be easily processed locally
+or transferred through the wireless interface. On the software
+side, simple filters such as low-pass filter (LPF) or median
+filter \cite{c12} are usually used to smooth the signal before using
+either feature-based or template-based detection algorithms to
+detect a gesture. Feature-based methods use machine-learning
+techniques such as Hidden Markov Model (HMM) or Support
+Vector Machine (SVM) \cite{c3} to classify the signal according
+to the extracted features. High accuracy is reported \cite{c13} but
+a large training set is required to ensure high detection rate.
+In template recognition, a widely used technique is dynamic
+time warping (DTW). It can get started with only one template
+for each gesture \cite{c14}. The signal is usually divided into fixedlength
+segments, and dynamic programming is used to find
 
-\section{Prepare Your Paper Before Styling}
-Before you begin to format your paper, first write and save the content as a 
-separate text file. Complete all content and organizational editing before 
-formatting. Please note sections \ref{AA}--\ref{SCM} below for more information on 
-proofreading, spelling and grammar.
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=red!30]
 
-Keep your text and graphic files separate until after the text has been 
-formatted and styled. Do not number text heads---{\LaTeX} will do that 
-for you.
+\tikzstyle{process} = [rectangle, minimum width=1cm, minimum height=1cm, text centered, text width=1cm, draw=black, fill=orange!30]
+
+\tikzstyle{decision} = [diamond, minimum width=0.5cm, minimum height=0.5cm, text centered, text width=0.5cm, draw=black, fill=green!30]
+
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+\begin{tikzpicture}[node distance=1.8cm]
+\node (start) [startstop] {\fontsize{8}{4}\selectfont Start};
+\node (pro1) [process, right of=start] {\fontsize{5}{4}\selectfont Preprocessing \\ (ACC+MTS)};
+\node (pro2) [process, right of=pro1] {\fontsize{5}{4}\selectfont Segmentation \\ (MTS Only)};
+\node (dec1) [decision, right of=pro2] {\fontsize{3}{4}\selectfont Length \\ Checking};
+\node (pro3) [process, below of=pro1] {\fontsize{5}{4}\selectfont Rejection};
+\node (pro4) [process, below of=pro3] {\fontsize{5}{4}\selectfont Decision \\ Fusion};
+\node (pro5) [process, right of=pro4] {\fontsize{5}{4}\selectfont 3D ACC DWT};
+\node (dec2) [decision, right of=pro5] {\fontsize{3}{4}\selectfont Score$\tiny<$THD\_S};
+\node (pro6) [process, right of=dec2] {\fontsize{5}{4}\selectfont 1D MTS DWT};
+\node (stop) [startstop, left of=pro4] {\fontsize{8}{4}\selectfont End};
+\draw [arrow] (start) -- (pro1);
+\draw [arrow] (pro1) -- (pro2);
+\draw [arrow] (pro2) -- (dec1);
+\draw [arrow] (dec1) -| node[anchor=east] {YES} (pro6);
+\draw [arrow] (dec1) |- node[anchor=south] {NO} (pro3);
+\draw [arrow] (dec2) -- node {YES} (pro5);
+\draw  (dec1) -- (dec2);
+\draw [arrow] (pro6) -- (dec2);
+\draw [arrow] (pro5) -- (pro4);
+\draw [arrow] (pro3) -| (stop);
+\draw [arrow] (pro4) -- (stop);
+\end{tikzpicture}
+
+\begin{figure}[h]
+\centering
+\caption{Detection Algorithm}
+\end{figure}
+
+the best matching subsequence with the preset templates. The
+complexity of DTW is O(pST) with S being the segment size,
+T the template size, and p the number of preset templates.
+It can be easily implemented on a mobile platform such as a
+smartphone and many modern microcontroller units (MCU).
+
+To overcome the limitations of single ACC-based systems’
+inability to detect wrist movements, multiple previous works
+suggest to couple sEMG with ACC. In \cite{c15}, \cite{c16}, HMM, Kmeans
+clustering, and decision fusion are used to fuse the
+multi-channel sEMG signal with ACC. A set of more than
+18 gestures can be detected with a detection rate of over
+90$\%$. However, a multi-channel sEMG needs to be wired,
+and electrodes are big in size and can be uncomfortable to
+wear. Most applications require an extra troublesome step of
+skin preparation \cite{c8}, which generally includes hair removal,
+cleaning the skin, and applying conductive gel. The gel may
+cause skin irritation and also introduces instability as the
+gel dries over the time, thereby causing degradation of the
+signal quality and baseline wondering. The closest one to our
+system is \cite{c17}, which uses a single-channel sEMG with three
+electrodes 30 mm in diameter. The muscle contraction signal
+from sEMG is used as on-off control and only five gestures
+can be detected. It is made wearable with a much smaller size
+than the other two but still an order of magnitude larger than
+our proposed system and cannot solve the electrode problem.
+Therefore, ACC-sEMG-based systems are only suitable for a
+controlled environment.
+
+New sensing technologies, especially low-power wearable
+sensors, provide potential solutions to this problem. Optical
+sensor-based MTS is very promising in replacing sEMG in
+this application due its size and wearing comfort. A wellknown
+application of optical sensor is pulse oximetry, which
+is acquired from an LED-PD pair. The LED emits light into
+human tissue while the PD measures the transmittance or
+reflectance of light. When used for muscle tension, only the
+reflectance can be measured. It is a fairly complicated process
+since the muscle movement has a triple effect: the muscle fiber
+contraction changes both the light absorbance and the reflected
+light path, while the blood volume in the muscle also affects
+the reflected light. As a result, muscle movements manifest
+as changes to the signal frequencies and amplitude in the PD
+output. It is shown in \cite{c18} that optical sensors can differentiate
+between isometric and isotonic contraction and in work \cite{c19},
+\cite{c20}, similar optical sensors are used to monitor the upper
+limb movement for controlling prosthetic limbs. In all these
+works, the optical signal is only used for on-off control. Our
+study shows that far more details are provided even in a singlechannel
+MTS. We will show how to utilize the MTS signal in
+template matching.

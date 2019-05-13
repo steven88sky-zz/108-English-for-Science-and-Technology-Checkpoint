@@ -1,40 +1,168 @@
-\subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
-``Fig.~\ref{fig}'', even at the beginning of a sentence.
+\section{EVALUATION}
+\subsection{Detection Accuracy}
+We tested our HGR system on three subjects, two male
+and one female. One important aspect of HGR is the noise
+rejection. In real situations, gestures coexist with random
+activities. These random activity should be rejected instead of
+being recognized as a valid gesture. Otherwise, the system will
+become hard to use due to many false positives. We collected
+40 non-gesture noise patterns, including random hand or wrist
+shake with both short and long wrist activities from each
+subject. Another 40 samples of each gesture from each person
+are also record. The total collection time is over 1 hour each.
+The system is implemented on a laptop computer to repeatedly
+study the data. The detection rate is defined in Eq. (3).
 
-\begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab1}
-\end{center}
-\end{table}
+\begin{footnotesize}
+\begin{equation}
+Detection\_Rate = 1-\frac{True\_Negatives+False\_Positives}{Total\_Gestures}
+\end{equation}
+\end{footnotesize}
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.5\textwidth]{fig1.png}}
-\caption{Example of a figure caption.}
-\label{fig}
+As shown in Table I, the detection rate is over 93$\%$ with the
+highest over 95$\%$. We also implemented a single ACC-based
+HGR with the sliding window algorithm. A threshold is set to
+reject the noise based on the DTW score. The result clearly
+indicates that our system is superior to single ACC-based
+system in terms of noise rejection and detection accuracy.
+
+The detailed result for each gesture is shown in Table II.
+The detection rate is just the true positive rate, since no noise
+gesture is involved. Even though for some gestures, ACConly
+results in slightly higher detection rate than the fusion
+method does, the fusion method helps improve the accuracy
+of the majority at a very small cost. The overall result shows
+the advantage of decision fusion over the single ACC-based
+method. The same gesture is usually done multiple times with
+different stopping points or angles to record multiple templates
+for each gesture. This multi-template setting helps eliminate
+ambiguity. Fig. 10 shows the influence of the weight $\gamma$ in
+Eq. (2). The detection rates for all three people go beyond
+93$\%$ when $\gamma$ = 66$\%$.
+
+\subsection{Power Consumption}
+The power consumption of the system is measured using a
+current probe. The current values are integrated over a period
+of 5 minutes to calculate the average power consumption.
+Fig. 11 shows the periodic current signal of the optical sensor
+board. Even though the LED takes around 500$\mu$A when
+turned on, the duty of PWM is around 1.25$\%$. The optical
+sensor consumes around 258$\mu$W on average. The majority
+of the power is consumed by BLE communication sending
+and receiving data. The average power consumption of the
+CC2541 and MPU-9250 is around 57.5 mW. Thus, the power
+consumption increased by the MTS is only around 0.4$\%$ of
+the system power. The current system can last for more than 6
+hours without recharging. Further optimization for future work
+includes lowering the SoC`s Tx power, adjusting the sampling
+rate, and enabling threshold detection in the accelerometer.
+
+\subsection{Time Delay}
+The recognition system has also been ported to an
+iPhone4s. The measured computation delay is around 50 ms
+in the worst case with an average of 14 ms. Even with an
+expansion of around 30 gestures, the delay is under 100 ms.
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=8cm]{fig/fig10}
+\caption{Decision Weight}
 \end{figure}
 
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
-``Temperature/K''.
+\begin{table}
+\centering
+\caption{Total Detection Rate}
+\begin{tabular}{|c|c|c|c|c|} 
+\toprule
+Det. Alg.                  & Sub.   & TN & FP & Dec. Rate  \\ 
+\hline
+\multirow{3}{*}{Acc + MTS} & Male 1 & 18 & 4  & 93.89\%    \\ 
+\cline{2-5}
+                           & Male 2 & 11 & 5  & 95.56\%    \\ 
+\cline{2-5}
+                           & Female & 18 & 3  & 94.17\%    \\ 
+\hline
+\multirow{3}{*}{Acc}       & Male   & 25 & 17 & 88.33\%    \\ 
+\cline{2-5}
+                           & Male 2 & 14 & 9  & 93.61\%    \\ 
+\cline{2-5}
+                           & Female & 31 & 7  & 89.44\%    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}
+\centering
+\caption{Detection Rate of Each Gesture}
+\scriptsize
+\begin{tabular}{|c|c|c|c|c|c|} 
+\toprule
+Sub.                                                                                     & Gesture        & Fusion Rate & Acc. Rate & Temp. & Length         \\ 
+\hline
+\multirow{9}{*}{\begin{tabular}[c]{@{}l@{}}Male 1\\$\gamma$ = 0.66 \end{tabular}}           & Up             & 92.5\%      & 87.5\%    & 4     & 240ms-928ms    \\ 
+\cline{2-6}
+                                                                                         & Dn/Rel.        & 90.0\%      & 60.0\%    & 6     & 304ms-1312ms   \\ 
+\cline{2-6}
+                                                                                         & Rot.$\leftarrow$  & 92.5\%      & 95.0\%    & 2     & 304ms-1120ms   \\ 
+\cline{2-6}
+                                                                                         & Rot.$\rightarrow$ & 90.0\%      & 90.0\%    & 2     & 288ms-1200ms   \\ 
+\cline{2-6}
+                                                                                         & Fist           & 97.5\%      & 67.5\%    & 2     & 448ms-1120ms   \\ 
+\cline{2-6}
+                                                                                         & Clicking       & 97.5\%      & 32.5\%    & 4     & 336ms-1040ms   \\ 
+\cline{2-6}
+                                                                                         & Left           & 95.0\%      & 92.5\%    & 1     & 480ms-1200ms   \\ 
+\cline{2-6}
+                                                                                         & Right          & 97.5\%      & 100.0\%   & 1     & 288ms-768ms    \\ 
+\cline{2-6}
+                                                                                         & Tol.           & 94.4\%      & 78.1\%    & 22    & 240ms-1312ms   \\ 
+\hline
+\multirow{9}{*}{\begin{tabular}[c]{@{}l@{}}Male 2\\$\gamma$ = 0.82 \end{tabular}} & Up             & 97.5\%      & 100.0\%   & 5     & 512ms-1408ms   \\ 
+\cline{2-6}
+                                                                                         & Dn/Rel.        & 92.5\%      & 95.0\%    & 5     & 480ms-1264ms   \\ 
+\cline{2-6}
+                                                                                         & Rot.$\leftarrow$  & 97.5\%      & 97.5\%    & 4     & 592ms-2880ms   \\ 
+\cline{2-6}
+                                                                                         & Rot.$\rightarrow$ & 100.0\%     & 100.0\%   & 4     & 560ms-2384ms   \\ 
+\cline{2-6}
+                                                                                         & Fist           & 97.5\%      & 67.5\%    & 1     & 656ms-1376ms   \\ 
+\cline{2-6}
+                                                                                         & Clicking       & 92.5\%      & 100.0\%   & 3     & 1072ms-1488ms  \\ 
+\cline{2-6}
+                                                                                         & Left           & 100.0\%     & 50.0\%    & 2     & 784ms-1040ms   \\ 
+\cline{2-6}
+                                                                                         & Right          & 95.0\%      & 45.0\%    & 2     & 672ms-1296ms   \\ 
+\cline{2-6}
+                                                                                         & Tol.           & 96.56\%     & 81.9\%    & 26    & 480ms-2880ms   \\ 
+\hline
+\multirow{9}{*}{\begin{tabular}[c]{@{}l@{}}Female\\$\gamma$ = 0.75 \end{tabular}}        & Up             & 97.5\%      & 100.0\%   & 4     & 784ms-1392ms   \\ 
+\cline{2-6}
+                                                                                         & Dn/Rel.        & 97.5\%      & 100.0\%   & 5     & 624ms-1424ms   \\ 
+\cline{2-6}
+                                                                                         & Rot.$\leftarrow$  & 92.5\%      & 82.5\%    & 2     & 1024ms-1840ms  \\ 
+\cline{2-6}
+                                                                                         & Rot.$\rightarrow$ & 92.5\%      & 90.0\%    & 2     & 1264ms-2544ms  \\ 
+\cline{2-6}
+                                                                                         & Fist           & 92.5\%      & 80.0\%    & 2     & 448ms-1408ms   \\ 
+\cline{2-6}
+                                                                                         & Clicking       & 90.0\%      & 80.0\%    & 3     & 688ms-2480ms   \\ 
+\cline{2-6}
+                                                                                         & Left           & 95.0\%      & 77.5\%    & 2     & 912ms-1488ms   \\ 
+\cline{2-6}
+                                                                                         & Right          & 90.0\%      & 80.0\%    & 1     & 912ms-1264ms   \\ 
+\cline{2-6}
+                                                                                         & Tol.           & 94.4\%      & 86.3\%    & 21    & 448ms-2544ms   \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Other Applications}
+We also tested the system on elbow and knee joints. The
+sensing locations are shown in Fig. 12. Signal samples are
+shown in Fig. 13. The degree of freedom of movement is
+generally less than the wrist joint. The MTS signal can be
+used to detect the muscle movement around the joint while
+the ACC data provides the detailed movement, such as moving
+direction, timing, etc. The fusion of both MTS and ACC can
+be synergistic in classifying the movements.

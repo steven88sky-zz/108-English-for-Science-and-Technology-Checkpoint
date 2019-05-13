@@ -1,43 +1,102 @@
-\subsection{Some Common Mistakes}\label{SCM}
-\begin{itemize}
-\item The word ``data'' is plural, not singular.
-\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
-\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
-\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
-\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
-\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
-\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
-\item Do not confuse ``imply'' and ``infer''.
-\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
-\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
-\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
-\end{itemize}
-An excellent style manual for science writers is \cite{b7}.
+\section{IMPLEMENTATION}
 
-\subsection{Authors and Affiliations}
-\textbf{The class file is designed for, but not limited to, six authors.} A 
-minimum of one author is required for all conference articles. Author names 
-should be listed starting from left to right and then moving down to the 
-next line. This is the author sequence that will be used in future citations 
-and by indexing services. Names should not be listed in columns nor group by 
-affiliation. Please keep your affiliations as succinct as possible (for 
-example, do not differentiate among departments of the same organization).
+\begin{figure}[t]
+\centering
+\subfigure[Cost matrix and warping window constraint]
+{
+  \includegraphics[width=4cm, scale=1]{fig/fig6a}
+}
+\subfigure[Slope constraint]
+{
+  \includegraphics[width=4cm, scale=1]{fig/fig6b}
+}
+\caption{Dynamic Time Warping with Constraints}
+\end{figure}
 
-\subsection{Identify the Headings}
-Headings, or heads, are organizational devices that guide the reader through 
-your paper. There are two types: component heads and text heads.
+\begin{figure}[t]
+\centering
+\includegraphics[width=8cm]{fig/fig7}
+\caption{Signal matched with Dynamic Time Warping}
+\end{figure}
 
-Component heads identify the different components of your paper and are not 
-topically subordinate to each other. Examples include Acknowledgments and 
-References and, for these, the correct style to use is ``Heading 5''. Use 
-``figure caption'' for your Figure captions, and ``table head'' for your 
-table title. Run-in heads, such as ``Abstract'', will require you to apply a 
-style (in this case, italic) in addition to the style provided by the drop 
-down menu to differentiate the head from the text.
+\begin{figure}[b]
+\centering
+\includegraphics[width=8cm]{fig/fig8}
+\caption{Proposed hybrid system}
+\end{figure}
 
-Text heads organize the topics on a relational, hierarchical basis. For 
-example, the paper title is the primary text head because all subsequent 
-material relates and elaborates on this one topic. If there are two or more 
-sub-topics, the next level head (uppercase Roman numerals) should be used 
-and, conversely, if there are not at least two sub-topics, then no subheads 
-should be introduced.
+Fig. 8 shows the block diagram of the proposed HGR
+system. It consists of a light emitter with a current source,
+a photo diode (PD) with an OpAMP, an inertial sensor, and
+a Bluetooth Low Energy (BLE) system-on-chip (SoC). To
+quickly validate our design, we implement our sensor board
+using a commercially available pulse-sensor design \cite{c21} but
+customize the board to our design. For the accelerometer and
+BLE board, we designed a prototype as shown in Fig. 1. Both
+boards are connected using jumpers. The overall dimension of
+the system including the battery is 30 mm (L) $\times$ 15 mm (W) $\times$
+8 mm (H). The optical sensor board for prototyping purpose
+may appear bulky but can be shrunk easily by fabricating a
+flexible PCB, as the optical sensors themselves are small. Even
+without optimization, the whole system is lightweight and can
+be easily adhered onto the wrist area or further integrated into
+a wearable sensing platform such as a wrist band or a watch.
+The sensing location of the optical sensor is shown in Fig. 9.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=6cm]{fig/fig9}
+\caption{Sensing location on the wrist area.}
+\end{figure}
+
+\subsection{Optical Subsystem}
+In the optical subsystem, the LED is driven by a PWMcontrolled
+current source \cite{c22} for brightness control. The
+LED current is limited to 500$\mu$A to prevent the on-surge
+current during fast switching. The color of the LED is green
+with a peak wavelength of 515 nm, which matches the peak
+wavelength of the PD response curve. This way, the PD
+response is maximized, thus further reducing the system power
+consumption. The green LED color is also proved to be more
+robust to motion artifact than other colors \cite{c23}. The LED
+on-time is set to approximately 200$\mu$s in every 16 ms by
+PWM control as shown in Fig. 11. In response to the LED,
+the PD outputs a current that flows through the load resistor
+to generates the voltage signal. The low-pass filter removes
+noise and motion artifact in the voltage signal, and the OpAMP
+amplifies it for sampling by the on-chip ADC on the CC2541.
+
+\subsection{Accelerometer}
+We use MPU-9250 \cite{c24} as the ACC controlled by the SPI
+interface of CC2541. MPU-9250 is actually a 9 degree-off-reedom
+(9-DoF) inertial sensor consisting of a triaxial ACC,
+gyroscope, and compass. We use only the ACC for this test
+while the gyro and compass are reserved for future use. The
+typical operating current of the gyroscope is 3.2 mA and
+only around 450$\mu$A for the ACC. The compass takes around
+280$\mu$A and can be helpful to gesture recognition but it is
+susceptible to the disturbance of other magnetic materials in
+the vicinity \cite{c25}.
+
+
+\subsection{Bluetooth Low Energy SoC}
+CC2541 from TI is an integrated MCU and radio frequency
+transceiver SoC that runs TI’s BLE protocol stack
+\cite{c26} and the application code on a single chip. Industrystandard
+profiles such as GATT (for attribute access) and GAP
+(for connection and discovery) are already implemented. The
+HGR system works as a slave server while the mobile device
+(smartphone) works as a master client. The BLE stack runs
+on a low-overhead, non-emptive, event-driven task executive
+called OSAL, which implements tasks as call-back functions.
+
+The CC2541 MCU performs MTS sampling, ACC reading,
+and data transmission over BLE. The MCU remains in lowpower
+mode normally. On each timer rollover, the MCU wakes
+up, reads its ADC for the MTS signal, and reads the ACC data
+from SPI. After all the data is acquired and stored into a local
+buffer, the MCU queues a sending event in the scheduler and
+go to low-power mode 3 (LPM3) again, from which the MCU
+can be waken by interrupts only. The sending event will cause
+the queued data to be sent the mobile client. This process
+repeats at a rate of 62.5 Hz.

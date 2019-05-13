@@ -1,27 +1,55 @@
-\section*{Acknowledgment}
+\begin{figure}[t]
+\centering
+\subfigure[PWM and PD output. Green:PWM, pink: PD output]
+{
+  \includegraphics[width=4cm, scale=1]{fig/fig11a}
+}
+\subfigure[Current consumption. Green:PWM, yellow: optical sensor board current signal]
+{
+  \includegraphics[width=4cm, scale=1]{fig/fig11b}
+}
+\caption{LED control and current consumption.}
+\end{figure}
 
-The preferred spelling of the word ``acknowledgment'' in America is without 
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
-acknowledgments in the unnumbered footnote on the first page.
+\begin{figure}[t]
+\centering
+\subfigure[Knee]
+{
+  \includegraphics[height=4cm, scale=1]{fig/fig12a}
+}
+\subfigure[Elbow]
+{
+  \includegraphics[height=4cm, scale=1]{fig/fig12b}
+}
+\caption{Sensing locations on the knee and elbow.}
+\end{figure}
 
-\section*{References}
+\section{CONCLUSIONS}
+In this paper, we have presented HANDIO, a wireless
+hybrid hand gesture recognition system of OMTS and ACC.
+Compared with previous works, the proposed system strikes
+the most balance among gesture variety, wearability, and power
+consumption. The OMTS enables the detection of wrist movements,
+which greatly increases the total number of detectable
+gestures of the current single ACC-based HSG.
 
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
+In addition to the hardware, we also describe a DTW
+and decision fusion-based detection algorithm, which shows
+a high detection rate. By fusing the MTS and ACC signals,
+the system response time is also significantly improved. We
+also show that the same system can be used in many other
+body-area sensor applications. Altogether we are building the
+next-generation, highly wearable sensor networks for accurate
+human movement monitoring and tracking.
 
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
-abstract or reference list. Use letters for table footnotes.
+\begin{figure}[t]
+\centering
+\includegraphics[width=8cm]{fig/fig13a}
+\caption{Signals from the knee and elbow joint.}
+\end{figure}
 
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
-element symbols.
-
-For papers published in translation journals, please give the English 
-citation first, followed by the original foreign-language citation \cite{b6}.
+\section*{Acknowledgments}
+This work was sponsored by the National Institute of
+Health (NIH) STTR Phase II Grant 2R42HL112435-03. The
+content is solely the responsibility of the authors and does not
+necessarily represent the official views of the sponsors.
